@@ -8,50 +8,39 @@ st.write("This public web interface routes queries securely down to your home la
 st.sidebar.header("🔌 Connection Tunnel Settings")
 tunnel_url = st.sidebar.text_input("Enter Laptop Tunnel URL", value="https://xxxx-xxxx.ngrok-free.app")
 
-# CHANGED: Use your normal login credentials instead of looking for hidden keys!
-st.sidebar.subheader("🔒 Open WebUI Credentials")
-email = st.sidebar.text_input("Email Address", value="")
-password = st.sidebar.text_input("Password", type="password")
+# FIXED: We use a direct master engine token string now to bypass login routing
+api_key = st.sidebar.text_input("Master Hardware Engine Token", type="password")
 
 st.header("💬 Ask Your Local Documents")
 query = st.text_input("What would you like to ask the documents stored on your home machine?")
 
 if query:
-    if not email or not password or "ngrok" not in tunnel_url:
-        st.error("⚠️ Setup incomplete: Please specify your tunnel URL, Email, and Password in the sidebar.")
+    if not api_key or "ngrok" not in tunnel_url:
+        st.error("⚠️ Setup incomplete: Please specify a valid tunnel URL and engine token in the sidebar.")
     else:
-        with st.spinner("Logging into your laptop and streaming request..."):
+        with st.spinner("Streaming request down to your laptop..."):
             try:
                 base_url = tunnel_url.strip('/')
                 
-                # 1. Automatically request a fresh JWT Token using your sign-in details
-                login_payload = {"email": email, "password": password}
-                login_res = requests.post(f"{base_url}/api/v1/auths/signin", json=login_payload, timeout=15)
+                # Use standard Bearer token mapping straight to the core completion engine
+                headers = {
+                    "Authorization": f"Bearer {api_key}",
+                    "Content-Type": "application/json"
+                }
+                payload = {
+                    "model": "gemma2:2b",
+                    "messages": [{"role": "user", "content": query}]
+                }
                 
-                if login_res.status_code != 200:
-                    st.error(f"❌ Login Failed: Unable to authenticate with Open WebUI. Check your email/password. Status: {login_res.status_code}")
+                # Plural completions endpoint target
+                response = requests.post(f"{base_url}/api/chat/completions", headers=headers, json=payload, timeout=60)
+                
+                if response.status_code == 200:
+                    answer = response.json()['choices']['message']['content']
+                    st.subheader("💡 Answer from your local documents:")
+                    st.write(answer)
                 else:
-                    # Extract the bearer token provided by your machine
-                    jwt_token = login_res.json().get("token")
-                    
-                    # 2. Use the token to pass your query down to gemma2:2b
-                    headers = {
-                        "Authorization": f"Bearer {jwt_token}",
-                        "Content-Type": "application/json"
-                    }
-                    payload = {
-                        "model": "gemma2:2b",
-                        "messages": [{"role": "user", "content": query}]
-                    }
-                    
-                    response = requests.post(f"{base_url}/api/chat/completions", headers=headers, json=payload, timeout=60)
-                    
-                    if response.status_code == 200:
-                        answer = response.json()['choices']['message']['content']
-                        st.subheader("💡 Answer from your local documents:")
-                        st.write(answer)
-                    else:
-                        st.error(f"❌ Failed to query model. Status Code: {response.status_code}. Details: {response.text}")
+                    st.error(f"❌ Connection Failed. Server returned Status Code: {response.status_code}. Detail: {response.text}")
                         
             except Exception as e:
                 st.error(f"🔗 Network Bridge Interrupted. Ensure your laptop's Ngrok tunnel is currently live. Error: {e}")
