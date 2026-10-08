@@ -1,6 +1,6 @@
 streamlit
 requests
-pypdf
+pdfplumber
 python-docx
 openpyxl
 python-pptx
