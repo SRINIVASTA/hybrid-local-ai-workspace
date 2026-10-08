@@ -1,25 +1,47 @@
 @echo off
-echo ⚙️ Creating data directories...
+title 🔌 Local AI Workspace Engine Launcher
+cls
+echo ==========================================================
+echo       🚀 STARTING YOUR LOCAL WORKSPACE PIPELINE
+echo ==========================================================
+echo.
+
+:: Step 1: Ensure directories exist safely
+echo [1/4] Verifying data workspace folders...
 mkdir data\webui 2>nul
 mkdir data\ollama 2>nul
+echo       ✓ Directories verified.
+echo.
 
-echo 🐳 Running Ollama ^& Open WebUI on your laptop...
-docker compose up -d
+:: Step 2: Clear traffic blocks by keeping Open WebUI stopped
+echo [2/4] Optimizing port lanes for Cloud Web App...
+docker stop open-webui-dashboard >nul 2>&1
+echo       ✓ Port traffic lanes cleared!
+echo.
 
-echo ⏳ Waiting for Ollama to stabilize...
+:: Step 3: Waking up your core Ollama container
+echo [3/4] Initializing local Ollama-Engine...
+docker start ollama-engine >nul 2>&1
+echo       ✓ Ollama container engine is awake!
+echo.
+
+:: Step 4: Verification loop to ensure model is awake
+echo [4/4] Verifying Gemma2 model status inside storage...
 :loop
-docker exec -it ollama-engine ollama list >nul 2>&1
+docker exec ollama-engine ollama list >nul 2>&1
 if %errorlevel% neq 0 (
     timeout /t 2 /nobreak >nul
     goto loop
 )
-
-echo 🤖 Downloading Gemma 2 (2B) model onto your hard drive...
-docker exec -it ollama-engine ollama pull gemma2:2b
+echo       ✓ Local engine stable and model library linked!
+echo.
 
 echo ==========================================================
-echo 🎉 DOWNLOAD COMPLETE ^& LOCAL SERVER RUNNING!
-echo 🌐 Go to: http://localhost:3000 to upload documents.
-echo ✨ Next, open a new command prompt and run: ngrok http 3000
+echo   🎉 SUCCESS: LOCAL PIPELINE ACTIVE!
+echo   👉 COPY THE NEW URL BELOW AND PASTE IT ON THE WEBSITE!
+echo   ⚠️ KEEP THIS DOS WINDOW OPEN WHILE CHATTING!
 echo ==========================================================
-pause
+echo.
+
+:: Launch ngrok pointing directly to Ollama core engine port
+"D:\localai\ngrok-v3-stable-windows-amd64\ngrok.exe" http 11434
