@@ -17,10 +17,10 @@ graph TD
     classDef engine fill:#FF9800,stroke:#333,stroke-width:2px,color:#fff;
 
     %% Nodes
-    WebUI["🌐 Public Web App UI<br>(Cloud Server App)"]:::cloud
+    WebUI["🌐 Public Web App UI<br>(Cloud Gateway with Password Access)"]:::cloud
     NgrokProxy["🔒 ngrok Proxy Edge<br>(ngrok-free.app)"]:::tunnel
-    LaptopTunnel["🔌 Local ngrok Agent<br>(Laptop Background)"]:::tunnel
-    DockerEngine["🐋 Docker Desktop<br>(ollama-engine Container)"]:::local
+    LaptopTunnel["🔌 Local ngrok Agent<br>(Laptop Background Script)"]:::tunnel
+    DockerEngine["🐋 Docker Desktop<br>(ollama-engine Container active)"]:::local
     OllamaAPI["🤖 Ollama Service<br>(Port 11434 / CORS Open)"]:::engine
     GemmaModel["🧠 Gemma2:2b Model<br>(Loaded in RAM)"]:::engine
 
@@ -40,13 +40,24 @@ graph TD
 ```text
 hybrid-local-ai-workspace/
 ├── cloud-web-files/
-│   ├── app.py             # Streamlit / Web UI deployment code
+│   ├── app.py             # Streamlit App Gateway with Session Password Lock
 │   └── requirements.txt   # Web engine dependencies
 └── laptop-engine-files/
     ├── compose.yaml       # Docker Compose setup for Ollama
-    ├── start.bat          # Windows automation launch script
+    ├── start.bat          # One-click port optimizer and ngrok launcher
     └── start.sh           # Linux/Mac bash launch script
 ```
+
+---
+
+## 🔐 Secrets Configuration
+
+To hide your access password from public GitHub view, configure the application gateway using **Streamlit Secrets**:
+1. Navigate to your **Streamlit Cloud Dashboard -> Settings -> Secrets**.
+2. Store your credentials in TOML format:
+   ```toml
+   access_password = "your_private_chosen_password"
+   ```
 
 ---
 
@@ -64,21 +75,15 @@ docker rm ollama-engine
 docker run -d -v ollama:/root/.ollama -p 11434:11434 -e OLLAMA_ORIGINS="*" --name ollama-engine ollama/ollama:latest
 ```
 
-Ensure the model required by the web application matches what is inside your container:
+Download the specific model variation targeted by the frontend environment configuration:
 ```bash
 docker exec -it ollama-engine ollama pull gemma2:2b
-```
-
-### 2. Expose the Network Link
-Run your terminal tunnel agent natively to map your port to the outside web network:
-```powershell
-& "D:\localai\ngrok-v3-stable-windows-amd64\ngrok.exe" http 11434
 ```
 
 ---
 
 ## 🛠️ Daily Operational Checklist
 
-1. **Verify Engine Core:** Ensure Docker Desktop is open and `ollama-engine` is listed as `Up`.
-2. **Ignite the Bridge:** Launch the `ngrok` pipeline to generate a fresh forwarding address.
-3. **Bind the Endpoint:** Copy the generated `https://*.ngrok-free.app` link and drop it right into the **Connection Tunnel Settings** container field on the interface dashboard.
+1. **Ignite the Automations:** Double-click the optimized **`start.bat`** file icon on your laptop. This automatically clears background Open WebUI port blocks, boots the engine core, and opens the dark ngrok proxy console workspace.
+2. **Bind the Endpoint Link:** Copy the fresh generated dynamic `https://*.ngrok-free.app` URL forwarding string from the command interface.
+3. **Unlock the Portal Dashboard:** Open your public site link, authenticate with your master gateway password, paste the URL into the **Connection Tunnel Settings** container field, and start chatting!
