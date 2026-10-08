@@ -4,9 +4,14 @@ import requests
 # CRITICAL: st.set_page_config MUST be the very first Streamlit command in the file
 st.set_page_config(page_title="Cloud Web AI File Searcher", layout="wide")
 
-# 1. Read the secret password securely from your Streamlit Cloud Dashboard secrets panel
-# If it's not typed in the dashboard yet, it safely falls back to a temporary text string
-SECRET_PASSWORD = st.secrets.get("access_password", "temporary_admin_password_123")
+# 1. Read the password ONLY from your Streamlit Cloud Dashboard secrets panel.
+# There is NO backup password hidden in this code anymore.
+if "access_password" in st.secrets:
+    SECRET_PASSWORD = st.secrets["access_password"]
+else:
+    # If secrets are missing on the dashboard, lock the app completely for safety
+    st.error("🔒 Security Error: Access password not configured in Streamlit Cloud Dashboard.")
+    st.stop()
 
 # 2. Check session state to see if the user is already logged in
 if "authenticated" not in st.session_state:
@@ -37,7 +42,7 @@ st.title("🌐 Cloud Web AI File Searcher")
 st.write("This public web interface routes queries securely down to your home laptop's local RAG data engine.")
 
 st.sidebar.header("🔌 Connection Tunnel Settings")
-tunnel_url = st.sidebar.text_input("Enter Laptop Tunnel URL", value="https://2189-2406-7400-45-ac2a-f5bb-9208-e338-d6c5.ngrok-free.app")
+tunnel_url = st.sidebar.text_input("Enter Laptop Tunnel URL", value="https://ngrok-free.app")
 
 st.header("💬 Ask Your Local Gemma Model")
 query = st.text_input("What would you like to ask the Gemma model running on your home machine?")
