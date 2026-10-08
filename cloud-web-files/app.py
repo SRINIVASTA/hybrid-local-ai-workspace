@@ -5,11 +5,11 @@ import requests
 st.set_page_config(page_title="Cloud Web AI File Searcher", layout="wide")
 
 # 1. Read the password ONLY from your Streamlit Cloud Dashboard secrets panel.
-# There is NO backup password hidden in this code anymore.
+# No passwords are hardcoded in this script text.
 if "access_password" in st.secrets:
     SECRET_PASSWORD = st.secrets["access_password"]
 else:
-    # If secrets are missing on the dashboard, lock the app completely for safety
+    # Safe lock to prevent unauthorized access if dashboard configurations are missing
     st.error("🔒 Security Error: Access password not configured in Streamlit Cloud Dashboard.")
     st.stop()
 
@@ -17,7 +17,7 @@ else:
 if "authenticated" not in st.session_state:
     st.session_state["authenticated"] = False
 
-# 3. If NOT logged in, show the clean login form block
+# 3. Show the login panel if the user is not authenticated
 if not st.session_state["authenticated"]:
     st.title("🔒 Secure AI Workspace Gateway")
     st.write("This portal routes down to a private local data engine. Please authenticate.")
@@ -33,7 +33,7 @@ if not st.session_state["authenticated"]:
         else:
             st.error("Incorrect password. Access denied.")
             
-    st.stop() # CRITICAL: Stops execution right here so your underlying layout stays hidden
+    st.stop() # CRITICAL: Firewall block to protect underlying settings and local machine
 
 # =========================================================================
 # MAIN APP INTERFACE (Only visible AFTER a successful login)
@@ -42,7 +42,8 @@ st.title("🌐 Cloud Web AI File Searcher")
 st.write("This public web interface routes queries securely down to your home laptop's local RAG data engine.")
 
 st.sidebar.header("🔌 Connection Tunnel Settings")
-tunnel_url = st.sidebar.text_input("Enter Laptop Tunnel URL", value="https://ngrok-free.app")
+# Your custom ngrok URL is now hardcoded as the default value here
+tunnel_url = st.sidebar.text_input("Enter Laptop Tunnel URL", value="https://2189-2406-7400-45-ac2a-f5bb-9208-e338-d6c5.ngrok-free.app")
 
 st.header("💬 Ask Your Local Gemma Model")
 query = st.text_input("What would you like to ask the Gemma model running on your home machine?")
