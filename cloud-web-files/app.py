@@ -6,7 +6,7 @@ st.title("🌐 Cloud Web AI File Searcher")
 st.write("This public web interface routes queries securely down to your home laptop's local RAG data engine.")
 
 st.sidebar.header("🔌 Connection Tunnel Settings")
-tunnel_url = st.sidebar.text_input("Enter Laptop Tunnel URL", value="https://ngrok-free.app")
+tunnel_url = st.text_input("Enter Laptop Tunnel URL", value="https://2189-2406-7400-45-ac2a-f5bb-9208-e338-d6c5.ngrok-free.app")
 
 st.header("💬 Ask Your Local Gemma Model")
 query = st.text_input("What would you like to ask the Gemma model running on your home machine?")
