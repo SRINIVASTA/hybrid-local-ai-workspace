@@ -43,7 +43,10 @@ st.title("🌐 Cloud Web AI File Searcher")
 st.write("Upload documents securely and extract semantic insights using your laptop's local RAG data engine.")
 
 st.sidebar.header("🔌 Connection Tunnel Settings")
-tunnel_url = st.sidebar.text_input("Enter Laptop Tunnel URL", value="https://ngrok-free.app")
+# Fetches the local file string configuration value dynamically if available
+default_tunnel = st.secrets.get("saved_tunnel_url", "https://ngrok-free.app")
+
+tunnel_url = st.sidebar.text_input("Enter Laptop Tunnel URL", value=default_tunnel)
 
 # HELPER FUNCTIONS TO EXTRACT VERBATIM TEXT FROM DIVERSE USER ASSETS
 def extract_text_from_file(uploaded_file):
