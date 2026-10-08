@@ -50,9 +50,12 @@ def extract_text_from_file(uploaded_file):
     text = ""
     try:
         if name.endswith('.pdf'):
-            reader = PdfReader(uploaded_file)
-            for page in reader.pages:
-                text += page.extract_text() + "\n"
+            # Using pdfplumber to extract layout text and handle advanced formatting
+            with pdfplumber.open(uploaded_file) as pdf:
+                for page in pdf.pages:
+                    page_text = page.extract_text()
+                    if page_text:
+                        text += page_text + "\n"
         elif name.endswith('.docx'):
             doc = Document(uploaded_file)
             for para in doc.paragraphs:
