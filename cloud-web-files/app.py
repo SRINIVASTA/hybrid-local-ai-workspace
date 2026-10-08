@@ -104,7 +104,7 @@ st.header("💬 Ask Your Local Gemma Model")
 query = st.text_input("What would you like to search or analyze inside your context files?")
 
 if query:
-    if "ngrok" not in tunnel_url:
+    if not in tunnel_url:
         st.error("⚠️ Setup incomplete: Please specify a valid tunnel URL in the sidebar.")
     else:
         # Construct the final prompt injecting the parsed local file text strings
