@@ -1,9 +1,10 @@
 import streamlit as st
 import requests
-from pypdf import PdfReader
+import pdfplumber  # <-- MAKE SURE THIS LINE IS PRESENT HERE!
 from docx import Document
 import openpyxl
 from pptx import Presentation
+
 
 # CRITICAL: st.set_page_config MUST be the very first Streamlit command in the file
 st.set_page_config(page_title="Cloud Web AI File Searcher", layout="wide")
