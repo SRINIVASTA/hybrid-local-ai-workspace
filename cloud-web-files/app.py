@@ -1,6 +1,39 @@
 import streamlit as st
 import requests
 
+import streamlit as st
+
+# 1. Define your secure secret password
+SECRET_PASSWORD = "your_chosen_secret_password_here"
+
+# 2. Check session state to see if the user is already logged in
+if "authenticated" not in st.session_state:
+    st.session_state["authenticated"] = False
+
+# 3. If NOT logged in, show the login screen
+if not st.session_state["authenticated"]:
+    st.title("🔒 Secure AI Workspace Gateway")
+    st.write("This portal routes down to a private local data engine. Please authenticate.")
+    
+    # Password entry field
+    user_password = st.text_input("Enter Access Password", type="password")
+    
+    if st.button("Login"):
+        if user_password == SECRET_PASSWORD:
+            st.session_state["authenticated"] = True
+            st.success("Access Granted! Loading Workspace...")
+            st.rerun() # Refresh the page to show the app
+        else:
+            st.error("Incorrect password. Access denied.")
+            
+    st.stop() # CRITICAL: Stops execution here so the rest of your app stays hidden
+
+# =========================================================================
+# YOUR ORIGINAL APP.PY CODE STARTS HERE
+# =========================================================================
+st.title("🔌 Connection Tunnel Settings")
+# ... (all your existing code goes down here)
+
 st.set_page_config(page_title="Cloud Web AI File Searcher", layout="wide")
 st.title("🌐 Cloud Web AI File Searcher")
 st.write("This public web interface routes queries securely down to your home laptop's local RAG data engine.")
